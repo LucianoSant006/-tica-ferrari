@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ótica Ferrari | Tudo a ver com você</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* --- CSS: VARIÁVEIS E RESET --- */
+        :root {
+            --primary-color: #00205b; /* Azul escuro da logo */
+            --accent-color: #e91e63; /* Rosa/Laranja do ícone do instagram para destaque */
+            --light-gray: #f5f5f5;
+            --text-color: #333;
+            --white: #ffffff;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER & NAV --- */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .top-bar {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 5px 0;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo img {
+            height: 60px; /* Ajuste para logo 2.png */
+            object-fit: contain;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .nav-links li a:hover, .nav-links li a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: var(--transition);
+        }
+
+        .nav-links li a:hover::after {
+            width: 100%;
+        }
+
+        .nav-icons {
+            display: flex;
+            gap: 20px;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .cart-icon {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- SECTIONS (SPA LOGIC) --- */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.5s;
+            min-height: 80vh;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HOME: CAROUSEL --- */
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+        }
+
+        /* Overlay escuro para melhorar leitura do texto */
+        .carousel-overlay {
+            background: linear-gradient(90deg, rgba(0,32,91,0.9) 0%, rgba(0,32,91,0.4) 100%);
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            text-align: left;
+            max-width: 1200px;
+            width: 90%;
+            margin: auto;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .btn-primary {
+            padding: 15px 40px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.4);
+        }
+
+        .btn-primary:hover {
+            background-color: #c2185b;
+            transform: translateY(-3px);
+        }
+
+        /* --- CATALOG PAGE & FILTERS --- */
+        .catalog-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 50px auto;
+            padding: 0 5%;
+            gap: 40px;
+        }
+
+        .filters {
+            width: 250px;
+            flex-shrink: 0;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+
+        .filter-group {
+            margin-bottom: 30px;
+        }
+
+        .filter-group h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--light-gray);
+            padding-bottom: 10px;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .filter-option input {
+            margin-right: 10px;
+            accent-color: var(--primary-color);
+            transform: scale(1.2);
+        }
+
+        .products-grid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            height: 200px;
+            width: 100%;
+            object-fit: contain;
+            padding: 20px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+
+        .product-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-brand {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 5px 0 10px 0;
+            color: var(--primary-color);
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-top: auto;
+        }
+
+        .product-btn {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .product-btn:hover {
+            background: #003380;
+        }
+
+        /* --- DICAS PAGE --- */
+        .tips-container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .tip-card {
+            display: flex;
+            background: white;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .tip-img {
+            width: 300px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .tip-content {
+            padding: 30px;
+            flex: 1;
+        }
+
+        .tip-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 60px 0 20px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 5%;
+            flex-wrap: wrap;
+        }
+
+        .footer-col {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 30px;
+        }
+
+        .footer-col h3 {
+            margin-bottom: 20px;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 10px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+            color: #ddd;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .footer-col ul li:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .copyright {
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+            margin-top: 20px;
+            color: #888;
+        }
+
+        /* --- RESPONSIVIDADE --- */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .catalog-container {
+                flex-direction: column;
+            }
+            .filters {
+                width: 100%;
+            }
+            .tip-card {
+                flex-direction: column;
+            }
+            .tip-img {
+                width: 100%;
+                height: 200px;
+            }
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+        }
+        /* --- VISAGISMO IA CSS --- */
+.scanner-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+.upload-area {
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
+    border: 3px dashed #ccc;
+    border-radius: 20px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    cursor: pointer;
+    background: white;
+    transition: var(--transition);
+}
+
+.upload-area:hover {
+    border-color: var(--primary-color);
+    background-color: #f9f9f9;
+}
+
+.upload-placeholder {
+    text-align: center;
+    padding: 20px;
+}
+
+.scan-preview {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #000;
+}
+
+.scan-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.8;
+}
+
+/* Animação do Scanner (Laser) */
+.scan-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #00ffcc;
+    box-shadow: 0 0 15px #00ffcc;
+    animation: scanning 2s linear infinite;
+    z-index: 10;
+}
+
+.face-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(0, 255, 204, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 204, 0.2) 1px, transparent 1px);
+    background-size: 50px 50px;
+    z-index: 5;
+}
+
+@keyframes scanning {
+    0% { top: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+}
+
+.result-box {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    animation: fadeIn 0.5s;
+}
+
+.recommendation {
+    background: var(--light-gray);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    border-left: 5px solid var(--accent-color);
+}
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        Entrega Grátis para todo o Brasil em compras acima de R$ 299,00
+    </div>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <img src="logo 2.png" alt="Ótica Ferrari Logo" onclick="navigate('home')">
+            </div>
+            <ul class="nav-links">
+                <li><a onclick="navigate('home')" class="active" id="nav-home">Home</a></li>
+<li><a onclick="navigate('products')" id="nav-products">Óculos de Grau</a></li>
+<li><a onclick="navigate('products')" id="nav-sun">Óculos de Sol</a></li>
+<li><a onclick="navigate('visagismo')" id="nav-visagismo" style="color: var(--accent-color);">✨ Visagismo IA</a></li> <li><a onclick="navigate('tips')" id="nav-tips">Dicas & Blog</a></li>
+            </ul>
+            <div class="nav-icons">
+                <i class="fas fa-search"></i>
+                <i class="far fa-user"></i>
+                <div class="cart-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-count" id="cart-count">0</span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section id="home" class="page-section active">
+        <div class="carousel-container">
+            <div class="carousel-slide active" style="background-image: url('imagem.jpg');">
+                <div class="carousel-overlay"></div> <div class="hero-content">
+                    <h1>Qual seu maior desafio<br>ao comprar óculos?</h1>
+                    <p>Na Ótica Ferrari, nós entendemos você. Tecnologia de ponta e estilo que combina com seu rosto.</p>
+                    <button class="btn-primary" onclick="navigate('products')">Ver Coleção</button>
+                </div>
+            </div>
+            <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1511499767150-a48a237f0083?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');">
+                <div class="carousel-overlay"></div>
+                <div class="hero-content">
+                    <h1>Lentes Premium<br>Varilux e Crizal</h1>
+                    <p>Proteção contra luz azul e antirreflexo de última geração.</p>
+                    <button class="btn-primary" onclick="navigate('products')">Consultar Lentes</button>
+                </div>
+            </div>
+             <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1577803645773-f96470509666?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');">
+                <div class="carousel-overlay"></div>
+                <div class="hero-content">
+                    <h1>Estilo que define<br>quem você é</h1>
+                    <p>Armações das maiores marcas mundiais com condições exclusivas.</p>
+                    <button class="btn-primary" onclick="navigate('products')">Comprar Agora</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 60px 0;">
+            <h2 style="color: var(--primary-color); font-size: 2rem;">Por que Ótica Ferrari?</h2>
+            <div style="display: flex; justify-content: center; gap: 50px; margin-top: 40px; flex-wrap: wrap;">
+                <div style="max-width: 200px;">
+                    <img src="oticas ferrari.png" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; margin-bottom: 15px;">
+                    <h3>Atendimento VIP</h3>
+                    <p>Consultoria visagista especializada.</p>
+                </div>
+                <div style="max-width: 200px;">
+                    <i class="fas fa-glasses" style="font-size: 4rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+                    <h3>Laboratório Próprio</h3>
+                    <p>Seus óculos prontos em até 1 hora.</p>
+                </div>
+                <div style="max-width: 200px;">
+                    <i class="fas fa-medal" style="font-size: 4rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+                    <h3>Garantia Estendida</h3>
+                    <p>1 ano de garantia em armações.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+<section id="visagismo" class="page-section">
+    <div style="background: linear-gradient(135deg, var(--primary-color), #000); color: white; padding: 60px 20px; text-align: center;">
+        <i class="fas fa-robot" style="font-size: 3rem; margin-bottom: 20px;"></i>
+        <h1>Visagismo Inteligente</h1>
+        <p>Envie uma selfie e nossa IA analisará a simetria do seu rosto para recomendar a armação perfeita.</p>
+    </div>
+
+    <div class="scanner-container">
+        <div class="upload-area" id="drop-zone">
+            <input type="file" id="face-upload" accept="image/*" hidden>
+            <div class="upload-placeholder" onclick="document.getElementById('face-upload').click()">
+                <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #ccc;"></i>
+                <p>Toque para enviar sua foto</p>
+                <small>Formatos: JPG, PNG (Sua foto não será salva)</small>
+            </div>
+            
+            <div class="scan-preview" id="scan-preview" style="display: none;">
+                <img id="uploaded-face" src="" alt="Seu Rosto">
+                <div class="scan-line"></div> <div class="face-grid"></div> </div>
+        </div>
+
+        <div class="result-box" id="result-box" style="display: none;">
+            <h3>Análise Concluída <i class="fas fa-check-circle" style="color: #4CAF50;"></i></h3>
+            <p>Formato Detectado: <strong id="face-shape-result" style="font-size: 1.2rem; color: var(--primary-color);">...</strong></p>
+            <p id="face-desc" style="color: #666; margin: 10px 0; font-size: 0.9rem;">...</p>
+            
+            <div class="recommendation">
+                <p>Melhor armação para você:</p>
+                <h2 id="glasses-rec">...</h2>
+            </div>
+
+            <button class="btn-primary" onclick="applyRecommendation()" style="margin-top: 20px; width: 100%;">
+                Ver Óculos Recomendados
+            </button>
+        </div>
+    </div>
+</section>
+    <section id="products" class="page-section">
+        <div style="background: var(--primary-color); color: white; padding: 40px; text-align: center;">
+            <h1>Nosso Catálogo</h1>
+            <p>Use os filtros para encontrar a armação perfeita.</p>
+        </div>
+
+        <div class="catalog-container">
+            <aside class="filters">
+                <div class="filter-group">
+                    <h3>Gênero</h3>
+                    <label class="filter-option"><input type="checkbox" value="Feminino" class="filter-input" data-type="gender"> Feminino</label>
+                    <label class="filter-option"><input type="checkbox" value="Masculino" class="filter-input" data-type="gender"> Masculino</label>
+                    <label class="filter-option"><input type="checkbox" value="Unissex" class="filter-input" data-type="gender"> Unissex</label>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Marca</h3>
+                    <label class="filter-option"><input type="checkbox" value="Ray-Ban" class="filter-input" data-type="brand"> Ray-Ban</label>
+                    <label class="filter-option"><input type="checkbox" value="Oakley" class="filter-input" data-type="brand"> Oakley</label>
+                    <label class="filter-option"><input type="checkbox" value="Prada" class="filter-input" data-type="brand"> Prada</label>
+                    <label class="filter-option"><input type="checkbox" value="Vogue" class="filter-input" data-type="brand"> Vogue</label>
+                    <label class="filter-option"><input type="checkbox" value="Ferrari" class="filter-input" data-type="brand"> Ferrari Line</label>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Material</h3>
+                    <label class="filter-option"><input type="checkbox" value="Metal" class="filter-input" data-type="material"> Metal</label>
+                    <label class="filter-option"><input type="checkbox" value="Acetato" class="filter-input" data-type="material"> Acetato</label>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Preço Máximo: <span id="price-val">R$ 2000</span></h3>
+                    <input type="range" min="100" max="2000" value="2000" id="price-range" style="width: 100%;">
+                </div>
+            </aside>
+
+            <main class="products-grid" id="product-grid">
+                </main>
+        </div>
+    </section>
+
+    <section id="tips" class="page-section">
+        <div style="background: var(--primary-color); color: white; padding: 40px; text-align: center;">
+            <h1>Dicas & Blog</h1>
+            <p>Cuide da sua saúde visual.</p>
+        </div>
+        
+        <div class="tips-container">
+            <article class="tip-card">
+                <div class="tip-img" style="background-image: url('https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');"></div>
+                <div class="tip-content">
+                    <h2>Como escolher o óculos ideal para seu rosto?</h2>
+                    <p>Rostos redondos combinam com armações quadradas, enquanto rostos quadrados pedem linhas mais suaves. Descubra qual o seu formato e acerte na escolha.</p>
+                    <br>
+                    <button class="btn-primary" style="font-size: 0.8rem; padding: 10px 20px;">Ler Mais</button>
+                </div>
+            </article>
+
+            <article class="tip-card">
+                <div class="tip-img" style="background-image: url('https://images.unsplash.com/photo-1505672675380-5a2298618db6?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80');"></div>
+                <div class="tip-content">
+                    <h2>A importância do Antirreflexo</h2>
+                    <p>Além da estética, o tratamento antirreflexo ajuda a diminuir a fadiga ocular, especialmente para quem trabalha frente ao computador ou dirige à noite.</p>
+                    <br>
+                    <button class="btn-primary" style="font-size: 0.8rem; padding: 10px 20px;">Ler Mais</button>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <h3>Ótica Ferrari</h3>
+                <p>Tudo a ver com você. Tradição e qualidade visual desde 1990.</p>
+                <br>
+                <img src="logo 2.png" style="height: 40px; filter: brightness(0) invert(1);">
+            </div>
+            <div class="footer-col">
+                <h3>Links Úteis</h3>
+                <ul>
+                    <li onclick="navigate('home')">Home</li>
+                    <li onclick="navigate('products')">Catálogo</li>
+                    <li onclick="navigate('tips')">Blog</li>
+                    <li>Política de Privacidade</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contato</h3>
+                <ul>
+                    <li><i class="fas fa-phone"></i> (11) 99999-9999</li>
+                    <li><i class="fas fa-envelope"></i> contato@oticaferrari.com.br</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Av. Paulista, 1000 - SP</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2024 Ótica Ferrari. Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <script>
+        // === BANCO DE DADOS MOCKADO (SIMULAÇÃO) ===
+        const productsData = [
+            { id: 1, name: "Aviator Classic", brand: "Ray-Ban", price: 790.00, gender: "Unissex", material: "Metal", img: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=500&q=60" },
+            { id: 2, name: "Holbrook Matte", brand: "Oakley", price: 650.00, gender: "Masculino", material: "Acetato", img: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=500&q=60" },
+            { id: 3, name: "Vogue CatEye", brand: "Vogue", price: 450.00, gender: "Feminino", material: "Acetato", img: "https://images.unsplash.com/photo-1556306535-0f09a537f0a3?auto=format&fit=crop&w=500&q=60" },
+            { id: 4, name: "Ferrari Carbon", brand: "Ferrari", price: 1200.00, gender: "Masculino", material: "Metal", img: "https://images.unsplash.com/photo-1533810486795-c15c6131d77d?auto=format&fit=crop&w=500&q=60" },
+            { id: 5, name: "Prada Elegance", brand: "Prada", price: 1500.00, gender: "Feminino", material: "Acetato", img: "https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=500&q=60" },
+            { id: 6, name: "Hexagonal Gold", brand: "Ray-Ban", price: 850.00, gender: "Unissex", material: "Metal", img: "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?auto=format&fit=crop&w=500&q=60" },
+            { id: 7, name: "Wayfarer", brand: "Ray-Ban", price: 720.00, gender: "Masculino", material: "Acetato", img: "https://images.unsplash.com/photo-1591076482161-42ce6da69f67?auto=format&fit=crop&w=500&q=60" },
+            { id: 8, name: "Crystal Clear", brand: "Vogue", price: 390.00, gender: "Feminino", material: "Acetato", img: "https://images.unsplash.com/photo-1570215778453-60b6103632f0?auto=format&fit=crop&w=500&q=60" },
+        ];
+
+        // === ESTADO DA APLICAÇÃO ===
+        let cart = 0;
+        let filters = {
+            gender: [],
+            brand: [],
+            material: [],
+            maxPrice: 2000
+        };
+
+        // === 1. NAVEGAÇÃO SPA (SINGLE PAGE APPLICATION) ===
+        function navigate(pageId) {
+            // Esconde todas as seções
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // Mostra a seção desejada
+            document.getElementById(pageId).classList.add('active');
+            
+            // Atualiza menu ativo
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            const navLink = document.getElementById(`nav-${pageId}`);
+            if(navLink) navLink.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0,0);
+        }
+
+        // === 2. CARROSSEL LÓGICA MANUAL ===
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-slide');
+        
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        setInterval(nextSlide, 5000); // Muda a cada 5 segundos
+
+        // === 3. RENDERIZAÇÃO DE PRODUTOS E FILTROS ===
+        const grid = document.getElementById('product-grid');
+
+        function renderProducts() {
+            grid.innerHTML = '';
+            
+            // Lógica de Filtragem
+            const filtered = productsData.filter(product => {
+                const genderMatch = filters.gender.length === 0 || filters.gender.includes(product.gender);
+                const brandMatch = filters.brand.length === 0 || filters.brand.includes(product.brand);
+                const materialMatch = filters.material.length === 0 || filters.material.includes(product.material);
+                const priceMatch = product.price <= filters.maxPrice;
+
+                return genderMatch && brandMatch && materialMatch && priceMatch;
+            });
+
+            if(filtered.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 50px;"><h3>Nenhum produto encontrado com esses filtros.</h3></div>';
+                return;
+            }
+
+            // Geração de HTML
+            filtered.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img src="${product.img}" alt="${product.name}" class="product-image">
+                    <div class="product-info">
+                        <span class="product-brand">${product.brand}</span>
+                        <h3 class="product-name">${product.name}</h3>
+                        <p style="font-size: 0.9rem; color: #666;">${product.gender} | ${product.material}</p>
+                        <div class="product-price">R$ ${product.price.toFixed(2).replace('.',',')}</div>
+                        <button class="product-btn" onclick="addToCart('${product.name}')">Adicionar à Sacola</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // === 4. EVENT LISTENERS DOS FILTROS ===
+        document.querySelectorAll('.filter-input').forEach(input => {
+            input.addEventListener('change', (e) => {
+                const type = e.target.dataset.type;
+                const value = e.target.value;
+
+                if(e.target.checked) {
+                    filters[type].push(value);
+                } else {
+                    filters[type] = filters[type].filter(item => item !== value);
+                }
+                renderProducts();
+            });
+        });
+
+        // Filtro de Preço Slider
+        const priceRange = document.getElementById('price-range');
+        const priceDisplay = document.getElementById('price-val');
+        
+        priceRange.addEventListener('input', (e) => {
+            filters.maxPrice = Number(e.target.value);
+            priceDisplay.innerText = `R$ ${filters.maxPrice}`;
+            renderProducts();
+        });
+
+        // === 5. CARRINHO ===
+        function addToCart(productName) {
+            cart++;
+            document.getElementById('cart-count').innerText = cart;
+            alert(`${productName} foi adicionado ao seu carrinho!`);
+        }
+
+        // INICIALIZAÇÃO
+        renderProducts();
+// === LÓGICA DE VISAGISMO E ANÁLISE DE IMAGEM ===
+const uploadInput = document.getElementById('face-upload');
+const preview = document.getElementById('scan-preview');
+const imgElement = document.getElementById('uploaded-face');
+const resultBox = document.getElementById('result-box');
+const placeholder = document.querySelector('.upload-placeholder');
+let currentRecommendationFilter = null; // Para guardar o filtro
+
+uploadInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        // 1. Mostrar Preview
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            imgElement.src = event.target.result;
+            placeholder.style.display = 'none';
+            preview.style.display = 'block';
+            resultBox.style.display = 'none';
+            
+            // 2. Simular Processamento (3 segundos de scanner)
+            setTimeout(() => {
+                analyzeFace(imgElement);
+            }, 3000);
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+function analyzeFace(imageElement) {
+    // Aqui usamos uma lógica baseada na proporção da imagem para SIMULAR a IA
+    // Em um app real, usaríamos a biblioteca 'face-api.js'
+    
+    const width = imageElement.naturalWidth;
+    const height = imageElement.naturalHeight;
+    const ratio = height / width;
+
+    let shape = "";
+    let desc = "";
+    let glasses = "";
+    let filterKey = ""; // Qual atributo filtrar no catálogo
+
+    // Algoritmo de Mock (Simulação baseada em proporção)
+    // 1.0 a 1.2 = Quadrado/Redondo
+    // > 1.3 = Oval/Longo
+    
+    if (ratio < 1.1) {
+        shape = "Rosto Redondo";
+        desc = "Suas linhas são suaves com largura e altura similares.";
+        glasses = "Quadrados ou Retangulares";
+        filterKey = "Ray-Ban"; // Exemplo: mapear para marcas mais 'quadradas' ou estilo
+        currentRecommendationFilter = "Acetato"; // Filtrar por material (exemplo)
+    } else if (ratio >= 1.1 && ratio < 1.35) {
+        shape = "Rosto Quadrado";
+        desc = "Maxilar marcado e testa larga, traços fortes.";
+        glasses = "Redondos ou Aviador";
+        filterKey = "Metal"; 
+        currentRecommendationFilter = "Metal";
+    } else {
+        shape = "Rosto Oval / Longo";
+        desc = "Rosto equilibrado, ligeiramente mais longo que largo.";
+        glasses = "Gatinho ou Oversized";
+        filterKey = "Vogue";
+        currentRecommendationFilter = "Acetato";
+    }
+
+    // Exibir Resultado
+    document.getElementById('face-shape-result').innerText = shape;
+    document.getElementById('face-desc').innerText = desc;
+    document.getElementById('glasses-rec').innerText = glasses;
+    
+    // Parar animação visualmente (opcional, mas o CSS continua rodando)
+    resultBox.style.display = 'block';
+    
+    // Scroll suave para o resultado
+    resultBox.scrollIntoView({ behavior: 'smooth' });
+}
+
+function applyRecommendation() {
+    // 1. Ir para a página de produtos
+    navigate('products');
+    
+    // 2. Resetar filtros atuais
+    filters = {
+        gender: [],
+        brand: [],
+        material: [],
+        maxPrice: 2000
+    };
+
+    // 3. Aplicar o filtro recomendado (Aqui simulo filtrando por material ou marca)
+    // Se a IA recomendou "Metal" (para rosto quadrado), ativamos o filtro
+    if(currentRecommendationFilter) {
+        filters.material.push(currentRecommendationFilter);
+        
+        // Atualizar visualmente os checkboxes (opcional)
+        document.querySelectorAll('.filter-input').forEach(input => {
+            if(input.value === currentRecommendationFilter) input.checked = true;
+            else input.checked = false;
+        });
+        
+        alert(`Filtro Aplicado: Óculos de ${currentRecommendationFilter} combinam com seu rosto!`);
+    }
+
+    renderProducts();
+}
+    </script>
+</body>
+</html>
