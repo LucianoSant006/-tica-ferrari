@@ -7,7 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        /* --- CSS MANTIDO --- */
+        /* --- ESTILO (CSS) --- */
         :root { --primary-color: #00205b; --accent-color: #e91e63; --light-gray: #f5f5f5; --text-color: #333; --white: #ffffff; --transition: all 0.3s ease; --shadow: 0 4px 15px rgba(0,0,0,0.1); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: var(--light-gray); color: var(--text-color); overflow-x: hidden; }
@@ -44,6 +44,12 @@
         .filter-group h3 { font-size: 1.1rem; margin-bottom: 15px; color: var(--primary-color); border-bottom: 2px solid var(--light-gray); padding-bottom: 10px; }
         .filter-option { display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; font-size: 0.95rem; }
         .filter-option input { margin-right: 10px; accent-color: var(--primary-color); transform: scale(1.2); }
+        
+        /* Badge para identificar se é Sol ou Grau */
+        .type-badge { position: absolute; top: 15px; left: 15px; padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; color: white; z-index: 10; }
+        .badge-sol { background-color: #ff9800; }
+        .badge-grau { background-color: var(--primary-color); }
+
         .products-grid { flex-grow: 1; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
         .product-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); position: relative; display: flex; flex-direction: column; }
         .product-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
@@ -101,8 +107,8 @@
             </a>
             <ul class="nav-links">
                 <li><a onclick="navigate('home')" class="active" id="nav-home">Home</a></li>
-                <li><a onclick="navigate('products')" id="nav-products">Óculos de Grau</a></li>
-                <li><a onclick="navigate('products')" id="nav-sun">Óculos de Sol</a></li>
+                <li><a onclick="showCategory('Grau')" id="nav-products">Óculos de Grau</a></li>
+                <li><a onclick="showCategory('Sol')" id="nav-sun">Óculos de Sol</a></li>
                 <li><a onclick="navigate('visagismo')" id="nav-visagismo" style="color: var(--accent-color);">✨ Visagismo IA</a></li>
                 <li><a onclick="navigate('tips')" id="nav-tips">Dicas & Blog</a></li>
             </ul>
@@ -201,12 +207,18 @@
 
     <section id="products" class="page-section">
         <div style="background: var(--primary-color); color: white; padding: 40px; text-align: center;">
-            <h1>Nosso Catálogo</h1>
+            <h1 id="catalog-title">Nosso Catálogo</h1>
             <p>Use os filtros para encontrar a armação perfeita.</p>
         </div>
 
         <div class="catalog-container">
             <aside class="filters">
+                <div class="filter-group">
+                    <h3>Tipo</h3>
+                    <label class="filter-option"><input type="checkbox" value="Grau" class="filter-input" data-type="type"> De Grau</label>
+                    <label class="filter-option"><input type="checkbox" value="Sol" class="filter-input" data-type="type"> De Sol</label>
+                </div>
+
                 <div class="filter-group">
                     <h3>Gênero</h3>
                     <label class="filter-option"><input type="checkbox" value="Feminino" class="filter-input" data-type="gender"> Feminino</label>
@@ -219,15 +231,18 @@
                     <label class="filter-option"><input type="checkbox" value="Oakley" class="filter-input" data-type="brand"> Oakley</label>
                     <label class="filter-option"><input type="checkbox" value="Prada" class="filter-input" data-type="brand"> Prada</label>
                     <label class="filter-option"><input type="checkbox" value="Vogue" class="filter-input" data-type="brand"> Vogue</label>
+                    <label class="filter-option"><input type="checkbox" value="Gucci" class="filter-input" data-type="brand"> Gucci</label>
+                    <label class="filter-option"><input type="checkbox" value="Carrera" class="filter-input" data-type="brand"> Carrera</label>
                 </div>
                 <div class="filter-group">
                     <h3>Material</h3>
                     <label class="filter-option"><input type="checkbox" value="Metal" class="filter-input" data-type="material"> Metal</label>
                     <label class="filter-option"><input type="checkbox" value="Acetato" class="filter-input" data-type="material"> Acetato</label>
+                    <label class="filter-option"><input type="checkbox" value="Titanio" class="filter-input" data-type="material"> Titânio</label>
                 </div>
                 <div class="filter-group">
                     <h3>Preço Máximo: <span id="price-val">R$ 2000</span></h3>
-                    <input type="range" min="100" max="2000" value="2000" id="price-range" style="width: 100%;">
+                    <input type="range" min="100" max="3000" value="2000" id="price-range" style="width: 100%;">
                 </div>
             </aside>
             <main class="products-grid" id="product-grid"></main>
@@ -263,18 +278,31 @@
     <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
     <script>
-        // === BANCO DE DADOS (CORRIGI A IMAGEM QUEBRADA) ===
+        // === "BANCO DE DADOS" SIMULADO (JSON EXPANDIDO) ===
+        // Adicionei um campo "type" para diferenciar Sol de Grau
         const productsData = [
-            { id: 1, name: "Aviator Classic", brand: "Ray-Ban", price: 790.00, gender: "Unissex", material: "Metal", img: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=500&q=60" },
-            { id: 2, name: "Holbrook Matte", brand: "Oakley", price: 650.00, gender: "Masculino", material: "Acetato", img: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=500&q=60" },
-            { id: 3, name: "Vogue CatEye", brand: "Vogue", price: 450.00, gender: "Feminino", material: "Acetato", img: "https://images.unsplash.com/photo-1556306535-0f09a537f0a3?auto=format&fit=crop&w=500&q=60" },
-            // IMAGEM CORRIGIDA ABAIXO:
-            { id: 4, name: "Ferrari Carbon", brand: "Ferrari", price: 1200.00, gender: "Masculino", material: "Metal", img: "https://images.unsplash.com/photo-1577803645773-f96470509666?auto=format&fit=crop&w=500&q=60" },
-            { id: 5, name: "Prada Elegance", brand: "Prada", price: 1500.00, gender: "Feminino", material: "Acetato", img: "https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=500&q=60" },
+            // --- ÓCULOS DE GRAU ---
+            { id: 1, name: "Aviator Classic", brand: "Ray-Ban", price: 790.00, gender: "Unissex", material: "Metal", type: "Grau", img: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=500&q=60" },
+            { id: 2, name: "Holbrook Clear", brand: "Oakley", price: 650.00, gender: "Masculino", material: "Acetato", type: "Grau", img: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=500&q=60" },
+            { id: 3, name: "Vogue CatEye", brand: "Vogue", price: 450.00, gender: "Feminino", material: "Acetato", type: "Grau", img: "https://images.unsplash.com/photo-1556306535-0f09a537f0a3?auto=format&fit=crop&w=500&q=60" },
+            { id: 4, name: "Ferrari Carbon", brand: "Ferrari", price: 1200.00, gender: "Masculino", material: "Metal", type: "Grau", img: "https://images.unsplash.com/photo-1577803645773-f96470509666?auto=format&fit=crop&w=500&q=60" },
+            { id: 5, name: "Prada Elegance", brand: "Prada", price: 1500.00, gender: "Feminino", material: "Acetato", type: "Grau", img: "https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fit=crop&w=500&q=60" },
+            { id: 6, name: "Titanium Light", brand: "Ray-Ban", price: 950.00, gender: "Unissex", material: "Titanio", type: "Grau", img: "https://images.unsplash.com/photo-1563905463-5456f4d8527d?auto=format&fit=crop&w=500&q=60" },
+            
+            // --- "PACK" DE ÓCULOS DE SOL (NOVOS PRODUTOS) ---
+            { id: 7, name: "Wayfarer Black", brand: "Ray-Ban", price: 890.00, gender: "Unissex", material: "Acetato", type: "Sol", img: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=500&q=60" },
+            { id: 8, name: "Gucci Oversized", brand: "Gucci", price: 2100.00, gender: "Feminino", material: "Acetato", type: "Sol", img: "https://images.unsplash.com/photo-1508296695146-25e94b6d28f6?auto=format&fit=crop&w=500&q=60" },
+            { id: 9, name: "Carrera Pilot", brand: "Carrera", price: 780.00, gender: "Masculino", material: "Metal", type: "Sol", img: "https://images.unsplash.com/photo-1570222094114-28a9d88a2b64?auto=format&fit=crop&w=500&q=60" },
+            { id: 10, name: "Hexagonal Gold", brand: "Ray-Ban", price: 820.00, gender: "Unissex", material: "Metal", type: "Sol", img: "https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?auto=format&fit=crop&w=500&q=60" },
+            { id: 11, name: "Oakley Sutro", brand: "Oakley", price: 980.00, gender: "Masculino", material: "Acetato", type: "Sol", img: "https://images.unsplash.com/photo-1625591341337-133595eb4455?auto=format&fit=crop&w=500&q=60" },
+            { id: 12, name: "Prada Cinema", brand: "Prada", price: 1850.00, gender: "Feminino", material: "Metal", type: "Sol", img: "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&w=500&q=60" },
+            { id: 13, name: "Clubmaster", brand: "Ray-Ban", price: 750.00, gender: "Unissex", material: "Acetato", type: "Sol", img: "https://images.unsplash.com/photo-1509695507497-903c140c43b0?auto=format&fit=crop&w=500&q=60" },
+            { id: 14, name: "Vogue Gigi", brand: "Vogue", price: 550.00, gender: "Feminino", material: "Metal", type: "Sol", img: "https://images.unsplash.com/photo-1582142839970-2b9e04b60f65?auto=format&fit=crop&w=500&q=60" },
+            { id: 15, name: "Ferrari Sport", brand: "Ferrari", price: 1400.00, gender: "Masculino", material: "Titanio", type: "Sol", img: "https://images.unsplash.com/photo-1534444535395-5735f52d0a0b?auto=format&fit=crop&w=500&q=60" }
         ];
 
         let cart = 0;
-        let filters = { gender: [], brand: [], material: [], maxPrice: 2000 };
+        let filters = { gender: [], brand: [], material: [], type: [], maxPrice: 3000 };
         let currentRecommendationFilter = null;
         let aiState = "loading";
 
@@ -286,6 +314,24 @@
             const navLink = document.getElementById(`nav-${pageId}`);
             if(navLink) navLink.classList.add('active');
             window.scrollTo(0,0);
+        }
+
+        // FUNÇÃO ESPECIAL PARA NAVEGAR POR CATEGORIA (SOL/GRAU)
+        function showCategory(categoryType) {
+            navigate('products');
+            
+            // Reseta filtros e marca o checkbox correto visualmente
+            filters = { gender: [], brand: [], material: [], type: [categoryType], maxPrice: 3000 };
+            
+            // Atualiza os checkboxes da interface
+            document.querySelectorAll('.filter-input[data-type="type"]').forEach(input => {
+                input.checked = (input.value === categoryType);
+            });
+            
+            // Muda o título
+            document.getElementById('catalog-title').innerText = categoryType === 'Sol' ? "Óculos de Sol" : "Armações de Grau";
+            
+            renderProducts();
         }
 
         // CARROSSEL
@@ -308,19 +354,23 @@
                 const genderMatch = filters.gender.length === 0 || filters.gender.includes(product.gender);
                 const brandMatch = filters.brand.length === 0 || filters.brand.includes(product.brand);
                 const materialMatch = filters.material.length === 0 || filters.material.includes(product.material);
+                const typeMatch = filters.type.length === 0 || filters.type.includes(product.type);
                 const priceMatch = product.price <= filters.maxPrice;
-                return genderMatch && brandMatch && materialMatch && priceMatch;
+                return genderMatch && brandMatch && materialMatch && typeMatch && priceMatch;
             });
 
             if(filtered.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 50px;"><h3>Nenhum produto encontrado.</h3></div>';
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 50px;"><h3>Nenhum produto encontrado.</h3><p>Tente ajustar os filtros.</p></div>';
                 return;
             }
 
             filtered.forEach(product => {
+                const badgeClass = product.type === 'Sol' ? 'badge-sol' : 'badge-grau';
+                
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 card.innerHTML = `
+                    <span class="type-badge ${badgeClass}">${product.type}</span>
                     <img src="${product.img}" alt="${product.name}" class="product-image">
                     <div class="product-info">
                         <span class="product-brand">${product.brand}</span>
@@ -355,39 +405,28 @@
             alert(`${name} adicionado!`);
         }
 
-        // === SISTEMA HÍBRIDO DE INTELIGÊNCIA ARTIFICIAL ===
+        // === SISTEMA HÍBRIDO DE IA (MANTIDO) ===
         const statusText = document.getElementById('ai-status');
 
         async function iniciarSistema() {
-            // Verifica se a biblioteca foi carregada
             if (typeof faceapi === 'undefined') {
-                console.log("Aguardando FaceAPI...");
-                setTimeout(iniciarSistema, 500); // Tenta de novo em meio segundo
+                setTimeout(iniciarSistema, 500);
                 return;
             }
-
             document.getElementById('face-upload').disabled = false;
-            
             try {
                 const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
                 statusText.innerText = "Carregando modelos neurais...";
-                
-                // Timeout de 6 segundos. Se a internet for lenta, usa modo simulação.
                 const timeout = new Promise((_, reject) => setTimeout(() => reject("Timeout"), 6000));
-                
                 const loadModels = Promise.all([
                     faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
                     faceapi.nets.faceLandmarks68Net.loadFromUri(MODEL_URL),
                 ]);
-
                 await Promise.race([loadModels, timeout]);
-
                 aiState = "ready";
                 statusText.innerText = "IA Pronta e Online";
                 statusText.style.color = "#4CAF50";
-
             } catch (err) {
-                console.warn("IA demorou muito. Ativando modo de compatibilidade.");
                 aiState = "simulation";
                 statusText.innerText = "Modo Compatibilidade Ativo";
                 statusText.style.color = "#FF9800";
@@ -422,51 +461,69 @@
             reader.readAsDataURL(file);
         });
 
-        // OPÇÃO A: IA REAL
         async function processarComIA(image) {
             try {
                 const detection = await faceapi.detectSingleFace(image, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks();
-
                 if (!detection) {
-                    alert("Rosto não detectado pela IA. Usando método visual...");
                     processarSimulacao(image); 
                     return;
                 }
-
                 const landmarks = detection.landmarks;
                 const jaw = landmarks.getJawOutline();
                 const nose = landmarks.getNose();
-                
                 const dist = (p1, p2) => Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
                 const larguraMaxilar = dist(jaw[0], jaw[16]);
                 const alturaRosto = dist(jaw[8], nose[0]) * 2.3;
-                
                 calcularResultado(alturaRosto / larguraMaxilar);
-
             } catch (error) {
-                console.error("Erro na IA, usando simulação", error);
                 processarSimulacao(image);
             }
         }
 
-        // OPÇÃO B: SIMULAÇÃO
-      
-       
-      
+        function processarSimulacao(image) {
+            setTimeout(() => {
+                calcularResultado(1.5); // Valor médio simulado
+            }, 2000);
+        }
+
+        function calcularResultado(ratio) {
+            const shapeTitle = document.getElementById('face-shape-result');
+            const desc = document.getElementById('face-desc');
+            const rec = document.getElementById('glasses-rec');
+            const resultBox = document.getElementById('result-box');
+
+            if (ratio > 1.6) {
+                shapeTitle.innerText = "Rosto Oval/Longo";
+                desc.innerText = "Seu rosto é equilibrado e ligeiramente alongado.";
+                rec.innerText = "Aviador ou Wayfarer";
+                currentRecommendationFilter = "Ray-Ban";
+            } else if (ratio < 1.4) {
+                shapeTitle.innerText = "Rosto Redondo";
+                desc.innerText = "Linhas suaves e largura similar à altura.";
+                rec.innerText = "Armações Quadradas (Oakley)";
+                currentRecommendationFilter = "Oakley";
+            } else {
+                shapeTitle.innerText = "Rosto Quadrado";
+                desc.innerText = "Maxilar definido e testa larga.";
+                rec.innerText = "Armações Redondas ou Gatinho";
+                currentRecommendationFilter = "Vogue";
+            }
+
+            document.getElementById('scan-preview').style.display = 'none';
+            resultBox.style.display = 'block';
+        }
 
         function applyRecommendation() {
             navigate('products');
-            filters = { gender: [], brand: [], material: [], maxPrice: 2000 };
+            filters = { gender: [], brand: [], material: [], type: [], maxPrice: 3000 };
             if(currentRecommendationFilter) {
-                if(currentRecommendationFilter === "Vogue") filters.brand.push("Vogue");
-                else filters.material.push(currentRecommendationFilter);
+                filters.brand.push(currentRecommendationFilter);
                 renderProducts();
             }
         }
 
-        // Inicializa Produtos
+        // Inicializa
         renderProducts();
-        // Inicia sistema da IA
         iniciarSistema();
 
     </script>
